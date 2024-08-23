@@ -17,6 +17,23 @@ const HEIGHT: u16 = 25;
 
 const VGA_START: u32 = 0x000b8000;
 
+pub const COLOR_BLACK: u8 = 0x0;
+pub const COLOR_BLUE: u8 = 0x1;
+pub const COLOR_GREEN: u8 = 0x2;
+pub const COLOR_CYAN: u8 = 0x3;
+pub const COLOR_RED: u8 = 0x4;
+pub const COLOR_MAGENTA: u8 = 0x5;
+pub const COLOR_YELLOW: u8 = 0x6;
+pub const COLOR_WHITE: u8 = 0x7;
+pub const COLOR_LIGHT_BLACK: u8 = 0x8;
+pub const COLOR_LIGHT_BLUE: u8 = 0x9;
+pub const COLOR_LIGHT_GREEN: u8 = 0xA;
+pub const COLOR_LIGHT_CYAN: u8 = 0xB;
+pub const COLOR_LIGHT_RED: u8 = 0xC;
+pub const COLOR_LIGHT_MAGENTA: u8 = 0xD;
+pub const COLOR_LIGHT_YELLOW: u8 = 0xE;
+pub const COLOR_LIGHT_WHITE: u8 = 0xF;
+
 pub struct Printer {
     x: u16,
     y: u16,
@@ -41,28 +58,25 @@ impl Printer {
         let target = (VGA_START + ((self.y * WIDTH + self.x) * 2) as u32) as *mut u8;
 
         unsafe {
-            if self.y == HEIGHT {
-                self.y -= 1;
+            if self.y >= HEIGHT - 1 && self.x >= WIDTH - 1 {
+                *target = c as u8;
+                *target.byte_add(1) = self.background << 4 | self.foreground;
+
                 self.scroll();
-                self.set_cursor_position();
-            }
-
-            //copy char byte to target
-            *target = c as u8;
-
-            //calculate color byte and move it to target + 1 byte
-            let color = self.background << 4 | self.foreground;
-            *target.byte_add(1) = color;
-
-            //increment x coord
-            self.x += 1;
-
-            //if x coord overflow go to new line
-            if self.x > WIDTH {
                 self.x = 0;
-                self.y += 1;
+            } else {
+                *target = c as u8;
+                *target.byte_add(1) = self.background << 4 | self.foreground;
+
+                self.x += 1;
+                if self.x >= WIDTH {
+                    self.x = 0;
+                    self.y += 1;
+                }
             }
         }
+
+        self.set_cursor_position();
     }
 
     //print a string by printing one char at the time
@@ -81,9 +95,21 @@ impl Printer {
     }
 
     pub fn delete(&mut self) {
-        self.x -= 1;
-        self.printc('\0');
-        self.x -= 1;
+        if self.x > 0 {
+            self.x -= 1;
+        } else if self.y > 0 {
+            self.y -= 1;
+            self.x = WIDTH - 1;
+        } else {
+            return;
+        }
+
+        let target: *mut u8 = (VGA_START + ((self.y * WIDTH + self.x) * 2) as u32) as *mut u8;
+
+        unsafe {
+            *target = b' ' as u8;
+            *target.byte_add(1) = self.background << 4 | self.foreground;
+        }
 
         self.set_cursor_position();
     }
@@ -126,10 +152,10 @@ impl Printer {
 
     //copy content of each row to upper row
     pub fn scroll(&mut self) {
-        for a in 0..25 {
-            for i in (80 * a)..((80 * a) + 80) {
-                let new = (VGA_START + i * 2) as *mut u8;
-                let old = (VGA_START + (i + 80) * 2) as *const u8;
+        for a in 0..HEIGHT {
+            for i in (WIDTH * a)..((WIDTH * a) + WIDTH) {
+                let new = (VGA_START + (i * 2) as u32) as *mut u8;
+                let old = (VGA_START + ((i + WIDTH) * 2) as u32) as *const u8;
 
                 unsafe {
                     *new = *old;
@@ -145,17 +171,31 @@ impl Printer {
     }
 
     pub fn reset_colors(&mut self) {
-        self.foreground = 0x7;
-        self.background = 0;
+        self.set_colors(COLOR_WHITE, COLOR_BLACK)
     }
 
     pub fn new_line(&mut self) {
-        self.x = 0;
-        self.y += 1;
-
-        if self.y == HEIGHT {
-            self.y -= 1;
+        if self.y == HEIGHT - 1 {
             self.scroll();
+        } else {
+            self.y += 1;
+        }
+
+        self.x = 0;
+
+        self.set_cursor_position();
+    }
+
+    pub fn clear(&mut self) {
+        self.x = 0;
+        self.y = 0;
+
+        for i in 0..(WIDTH * HEIGHT) {
+            let target: *mut u8 = (VGA_START + (i * 2) as u32) as *mut u8;
+            unsafe {
+                *target = b' ' as u8;
+                *target.byte_add(1) = self.background << 4 | self.foreground;
+            }
         }
 
         self.set_cursor_position();
