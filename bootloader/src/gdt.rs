@@ -10,7 +10,7 @@ use core::mem::size_of;
 const GDT_ENTRIES: usize = 3;
 
 pub static GDT: GlobalDescriptorTable = {
-    //segment lenght (0xffff means all 32bit memory)
+    //segment length (0xffff means all 32bit memory)
     let limit = {
         let limit_low = 0xffff << 0;
         let limit_high = 0xf << 48;

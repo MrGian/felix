@@ -2,7 +2,7 @@ use core::arch::asm;
 
 //CPU EXCEPTIONS HANDLERS
 
-//handle excpetion based on interrupt number
+//handle exception based on interrupt number
 #[no_mangle]
 pub extern "C" fn exception_handler(int: u32, eip: u32, cs: u32, eflags: u32) {
     match int {

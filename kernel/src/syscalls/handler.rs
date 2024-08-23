@@ -31,7 +31,7 @@ pub extern "C" fn syscall() {
 pub extern "C" fn syscall_handler(ecx: u32, ebx: u32, eax: u32) {
     unsafe {
         match eax {
-            //SYSCALL 0, print string pointed by ebx with lenght specified in ecx
+            //SYSCALL 0, print string pointed by ebx with length specified in ecx
             0 => {
                 let s = {
                     let slice = slice::from_raw_parts(ebx as *const u8, ecx as usize);

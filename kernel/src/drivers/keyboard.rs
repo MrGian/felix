@@ -10,7 +10,7 @@ use core::arch::asm;
 pub static mut KEYBOARD: Keyboard = Keyboard { lshift: false };
 
 pub const KEYBOARD_INT: u8 = 33;
-pub const KEYBAORD_CONTROLLER: u8 = 0x60;
+pub const KEYBOARD_CONTROLLER: u8 = 0x60;
 pub const CHAR_COUNT: usize = 36;
 
 pub struct Keyboard {
@@ -46,7 +46,7 @@ pub extern "C" fn keyboard_handler(charset: [u8; CHAR_COUNT]) {
     //read scancode from keyboard controller
     let scancode: u8;
     unsafe {
-        asm!("in al, dx", out("al") scancode, in("dx") KEYBAORD_CONTROLLER as u16);
+        asm!("in al, dx", out("al") scancode, in("dx") KEYBOARD_CONTROLLER as u16);
     }
 
     //notify pics end of interrupt

@@ -31,7 +31,7 @@ impl PageDirectory {
         }
     }
 
-    //indentity page first 32MiB
+    //identity page first 32MiB
     pub fn identity(&mut self) {
         unsafe {
             for i in 0..8 {
