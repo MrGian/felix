@@ -58,11 +58,27 @@ impl InterruptDescriptorTable {
 
     //add exception handlers for various cpu exceptions
     pub fn add_exceptions(&mut self) {
-        self.add(0x0, exceptions::div_error as u32);
-        self.add(0x6, exceptions::invalid_opcode as u32);
-        self.add(0x8, exceptions::double_fault as u32);
-        self.add(0xd, exceptions::general_protection_fault as u32);
-        self.add(0xe, exceptions::page_fault as u32);
+        self.add(0x00, exceptions::division_error as u32);
+        self.add(0x01, exceptions::debug_exception as u32);
+        self.add(0x02, exceptions::mni_interrupt as u32);
+        self.add(0x03, exceptions::breakpoint as u32);
+        self.add(0x04, exceptions::overflow as u32);
+        self.add(0x05, exceptions::bound_range_exceeded as u32);
+        self.add(0x06, exceptions::invalid_opcode as u32);
+        self.add(0x07, exceptions::device_not_available as u32);
+        self.add(0x08, exceptions::double_fault as u32);
+        self.add(0x09, exceptions::coprocessor_segment_overrun as u32);
+        self.add(0x0A, exceptions::invalid_tss as u32);
+        self.add(0x0B, exceptions::segment_not_present as u32);
+        self.add(0x0C, exceptions::stack_segment_fault as u32);
+        self.add(0x0D, exceptions::general_protection as u32);
+        self.add(0x0E, exceptions::page_fault as u32);
+        self.add(0x10, exceptions::x87_fpu_floating_point_error as u32);
+        self.add(0x11, exceptions::alignment_check as u32);
+        self.add(0x12, exceptions::machine_check as u32);
+        self.add(0x13, exceptions::simd_floating_point_exception as u32);
+        self.add(0x14, exceptions::virtualization_exception as u32);
+        self.add(0x15, exceptions::control_protection_exception as u32);
     }
 }
 
