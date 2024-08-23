@@ -4,7 +4,7 @@
 
 use core::arch::asm;
 
-//define a global PICS so it can be accessed from everywhere
+//define a global PICS, so it can be accessed from everywhere
 pub static PICS: Pics = Pics {
     master: Pic {
         offset: OFFSET,
@@ -79,8 +79,8 @@ impl Pic {
     }
 
     //check if pic is handling interrupt
-    pub fn handles_interrupt(&self, interupt: u8) -> bool {
-        self.offset <= interupt && interupt < self.offset + IRQ_COUNT
+    pub fn handles_interrupt(&self, interrupt: u8) -> bool {
+        self.offset <= interrupt && interrupt < self.offset + IRQ_COUNT
     }
 }
 

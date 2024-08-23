@@ -129,7 +129,7 @@ impl FatDriver {
     }
 
     //get entries array address and overwrite that mem location with data from root directory
-    //calculate size and position of root direcotry based on data from header
+    //calculate size and position of root directory based on data from header
     pub fn load_entries(&mut self) {
         libfelix::print!(" loading entries");
         let target = &mut self.entries as *mut Entry;
@@ -148,7 +148,7 @@ impl FatDriver {
         }
     }
 
-    //list each entry in root direcotry
+    //list each entry in root directory
     //TODO: add other info like creation_date ecc
     pub fn list_entries(&self) {
         libfelix::println!("Listing root directory entries:");

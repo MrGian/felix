@@ -4,7 +4,7 @@ use core::arch::asm;
 const STACK_SIZE: usize = 4096;
 const MAX_TASKS: i8 = 32;
 
-//each task has a 4KiB stack containg the cpu state in the bottom part of it
+//each task has a 4KiB stack containing the cpu state in the bottom part of it
 #[derive(Copy, Debug, Clone)]
 pub struct Task {
     pub stack: [u8; STACK_SIZE],
@@ -78,7 +78,7 @@ impl Task {
 }
 
 pub struct TaskManager {
-    tasks: [Task; MAX_TASKS as usize], //arry of tasks
+    tasks: [Task; MAX_TASKS as usize], //array of tasks
     task_count: i8,                    //how many tasks are in the queue
     current_task: i8,                  //current running task
 }

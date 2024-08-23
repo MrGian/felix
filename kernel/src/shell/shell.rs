@@ -106,7 +106,7 @@ impl Shell {
                 TASK_MANAGER.list_tasks();
             },
 
-            //remove runing task
+            //remove running task
             b if self.is_command("rt") => unsafe {
                 if (b[3] as u8) < 0x30 {
                     libfelix::println!("No task id provided!");
